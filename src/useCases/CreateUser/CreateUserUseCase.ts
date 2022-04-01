@@ -1,10 +1,12 @@
 import { User } from "../../entities/User";
+import { IMailProvider } from "../../providers/IMailProvider";
 import { IUsersRepository } from "../../repositories/IUsersRepository";
 import { ICreateUserRequestDTO } from "./CreateUserDTO";
 
 export class CreateUserUseCase {
   constructor(
-  private  usersRepository: IUsersRepository
+  private  usersRepository: IUsersRepository,
+  private mailProvider: IMailProvider,
   ){}
 
   async execute(data: ICreateUserRequestDTO){
@@ -17,5 +19,22 @@ export class CreateUserUseCase {
   const user = new User(data);
 
   await this.usersRepository.save(user);
+
+    this.mailProvider.sendMail({
+      to:{
+        name: data.name,
+        email: data.email,
+      },
+      from: {
+        name: 
+        'Equipe Goapp',
+        email:  
+        'equipe@goapp.com',
+      },
+      subject:
+      'Seja bem vindo à plataforma GoApp',
+      body: 
+      '<p>Faça seu login para continuar.</p>'
+    })
   }
 }
